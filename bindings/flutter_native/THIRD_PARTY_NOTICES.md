@@ -28,3 +28,13 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Build scaffolding
+
+The Gradle 8.10.2 wrapper scripts/JAR are distributed under Apache-2.0; see
+`third_party/gradle/LICENSE` and `third_party/gradle/NOTICE`. Distribution checksum
+is pinned in `gradle/wrapper/gradle-wrapper.properties`.
+
+Flutter 3.27.4 generated native host scaffolding is derived from Flutter's
+BSD-3-Clause templates; see `third_party/flutter/LICENSE`. These notices do not
+change Roooz's own MIT license or the jalaali-js attribution above.

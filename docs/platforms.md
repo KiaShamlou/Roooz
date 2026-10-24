@@ -3,17 +3,19 @@
 | Consumer | Integration | Local verification in this delivery |
 |---|---|---|
 | C/C++ on macOS | Make or CMake | Compiled and executed, including sanitizers |
-| Swift / SwiftUI | Root Swift Package | Unit tests and SwiftUI library compiled on macOS |
+| Swift / SwiftUI | Root Swift Package | 8 tests; macOS demo and iOS simulator demo compiled |
 | Kotlin/JVM | JNI + Kotlin source | Compiled and executed on macOS/JDK 17 |
-| Android / Kotlin | Gradle library + NDK CMake | Build definition and CI job; device/AAR validation pending |
+| Android / Kotlin | Gradle library + NDK CMake | AAR and Compose APK built; UI test passed on API 29 emulator in CI |
 | Dart native | Dynamic library + `dart:ffi` | Analyzer and real FFI smoke tests passed on macOS |
-| Flutter native | Dart binding + builder view | 5 library + 2 app widget tests passed with the real C library |
-| Windows / Linux C | CMake | CI jobs supplied; local cross-OS runtime not exercised |
+| Flutter native | Dart binding + builder view | 5 library + 2 app tests; bundled engine integration passed on Linux/macOS |
+| Windows / Linux C | CMake | Compiled and core tests executed on Windows/Linux hosted runners |
 | iOS | Swift Package or statically linked C for Dart | iOS simulator app compiled; interactive/physical-device validation pending |
 | Browser/web | — | Not supported by this native FFI release; WASM is a separate milestone |
 
 CI configuration is not evidence of a completed CI run. All language APIs share
 the C algorithms, but each shipping artifact still needs its platform build tests.
+
+See [verification](verification.md) for the exact commit/run and remaining device coverage.
 
 ## Native build
 

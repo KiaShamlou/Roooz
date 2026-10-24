@@ -161,8 +161,8 @@ copied host dylib. For raw Dart servers/CLI, supply an absolute native-library p
 
 ## Release roadmap
 
-1. Validate Android AAR and iOS simulator/device consumers; run UI/a11y test matrix.
-2. Validate the source-bundled Flutter engine on each target and publish registry packages.
+1. Expand physical-device, interactive SwiftUI iOS and screen-reader coverage.
+2. Extend bundled Flutter app tests beyond Linux/macOS and publish registry packages.
 3. Add WASM/browser bindings and additional language packages with the same fixtures.
 4. Add independently sourced, explicitly named calendar variants (e.g. Umm al-Qura),
    recurrence, week/year views and optional holiday/event providers.
