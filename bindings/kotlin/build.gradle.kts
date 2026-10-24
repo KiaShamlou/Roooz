@@ -5,6 +5,7 @@ plugins {
 android {
     namespace = "dev.rooz"
     compileSdk = 35
+    ndkVersion = "27.0.12077973"
     defaultConfig {
         minSdk = 21
         consumerProguardFiles("consumer-rules.pro")

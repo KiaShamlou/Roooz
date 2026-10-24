@@ -8,6 +8,8 @@
 # else
 #  define RC_API __declspec(dllimport)
 # endif
+#elif defined(__GNUC__) || defined(__clang__)
+# define RC_API __attribute__((visibility("default")))
 #else
 # define RC_API
 #endif

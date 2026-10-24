@@ -10,3 +10,7 @@ endif()
 if(MSVC)
   target_compile_options(rooz_jni PRIVATE /utf-8)
 endif()
+
+if(ANDROID)
+  target_link_options(rooz_jni PRIVATE "-Wl,-z,max-page-size=16384")
+endif()
