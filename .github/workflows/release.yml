@@ -1,0 +1,25 @@
+name: draft-source-release
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing reviewed version tag (for example v0.1.0-alpha.1)
+        required: true
+permissions:
+  contents: write
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
+      - run: make test oracle reference
+      - run: python3 tools/sync_flutter_core.py --check
+      - run: tools/package_release.sh
+      - name: Create draft only
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: gh release create "$TAG" dist/Roooz-source.tar.gz dist/SHA256SUMS --verify-tag --draft --generate-notes

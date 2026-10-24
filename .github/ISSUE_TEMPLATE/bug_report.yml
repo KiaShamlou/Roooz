@@ -1,0 +1,23 @@
+name: Calendar correctness bug
+description: Report a reproducible conversion, parsing or selection issue.
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Rooz version, binding and OS
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal input and actual result
+      description: Include calendar ID, dates, pattern, digits, week start and range rules.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result and independent reference
+      description: Include source/version; distinguish Islamic civil from Umm al-Qura or observation-based dates.
+    validations:
+      required: true

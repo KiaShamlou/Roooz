@@ -1,0 +1,117 @@
+name: conformance
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+concurrency:
+  group: conformance-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  core:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build build --config Release
+      - run: ctest --test-dir build -C Release --output-on-failure
+  oracles:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: make test oracle reference sanitize
+      - run: node tools/jalali_boundaries.cjs > /tmp/boundaries.tsv && cmp tests/fixtures/jalali-boundaries.tsv /tmp/boundaries.tsv
+      - run: python3 tools/sync_flutter_core.py --check
+      - run: tools/package_release.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Roooz-source
+          path: dist/
+  swift:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift test
+      - run: swift build --package-path examples/swiftui
+      - run: xcodebuild -project examples/swiftui/RoozDemo.xcodeproj -scheme RoozDemo -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO build
+  kotlin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install pinned Kotlin compiler
+        run: |
+          curl -fL https://github.com/JetBrains/kotlin/releases/download/v2.1.10/kotlin-compiler-2.1.10.zip -o /tmp/kotlin.zip
+          unzip -q /tmp/kotlin.zip -d /tmp/rooz-kotlin
+      - run: KOTLINC=/tmp/rooz-kotlin/kotlinc/bin/kotlinc tools/test_kotlin.sh
+  dart:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.6.2'
+      - run: make all
+      - run: dart analyze bindings/dart
+      - run: dart format --output=none --set-exit-if-changed bindings/dart
+      - run: dart run bindings/dart/test/smoke.dart "$PWD/build/librooz.so"
+      - run: dart compile exe bindings/dart/test/smoke.dart -o build/dart-conformance && build/dart-conformance "$PWD/build/librooz.so"
+  flutter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.4'
+          cache: true
+      - run: make all
+      - name: Analyze and run real-FFI widget tests
+        run: |
+          for dir in bindings/flutter bindings/flutter_native examples/flutter; do
+            (cd "$dir" && flutter pub get && flutter analyze)
+          done
+          dart format --output=none --set-exit-if-changed bindings/flutter bindings/flutter_native/lib examples/flutter/lib examples/flutter/test examples/flutter/integration_test
+          (cd bindings/flutter && ROOZ_LIBRARY="$GITHUB_WORKSPACE/build/librooz.so" flutter test)
+          (cd examples/flutter && ROOZ_LIBRARY="$GITHUB_WORKSPACE/build/librooz.so" flutter test)
+      - name: Linux bundled engine integration
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ninja-build libgtk-3-dev xvfb
+          cd examples/flutter
+          xvfb-run -a flutter test integration_test/bundled_engine_test.dart -d linux
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew -p bindings/kotlin assembleRelease
+      - run: ./gradlew -p examples/compose :app:assembleDebug :app:assembleAndroidTest
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          arch: x86_64
+          script: ./gradlew -p examples/compose :app:connectedDebugAndroidTest
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Roooz-Android-demo
+          path: |
+            examples/compose/app/build/outputs/apk/debug/*.apk
+            bindings/kotlin/build/outputs/aar/*release.aar

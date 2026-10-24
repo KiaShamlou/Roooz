@@ -1,0 +1,17 @@
+name: rooz_calendar_flutter
+description: Controlled and fully builder-driven Flutter month grid for the native Rooz calendar engine.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+  flutter: '>=3.22.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  rooz_calendar:
+    path: ../dart
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+repository: https://github.com/KiaShamlou/Roooz
