@@ -1,4 +1,5 @@
 #include "rooz.h"
+#include "fixtures/official_1405.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,6 +57,22 @@ static void dates(void) {
         CHECK(rc_add_days(c,previous,1)==RC_INVALID_DAY);
     }
     printf("PASS exhaustive: %lu civil dates\n",dates);
+}
+static void official_calendar(void) {
+    unsigned count = 0;
+    for (int month = 1; month <= 12; ++month) {
+        const int length = official_1405[month-1][0];
+        const int weekday = official_1405[month-1][1];
+        CHECK(rc_days_in_month(RC_JALALI, 1405, month) == length);
+        CHECK(rc_to_day(RC_JALALI, 1405, month, length+1) == RC_INVALID_DAY);
+        for (int day = 1; day <= length; ++day) {
+            int epoch = rc_to_day(RC_JALALI, 1405, month, day);
+            CHECK(rc_get_field(RC_JALALI, epoch, RC_WEEKDAY) == (weekday+day-2)%7+1);
+            ++count;
+        }
+    }
+    CHECK(count == 365);
+    puts("PASS official 1405: 12 month lengths, 365 weekday positions");
 }
 static void formatting(void) {
     char out[256]; int32_t day=rc_to_day(1,1403,1,1);
@@ -137,6 +154,6 @@ static void malformed(void) {
 }
 int main(int argc,char **argv) {
     if (argc>2 && strcmp(argv[1],"--reference")==0) reference(argv[2]);
-    else if (argc>1) oracle(argv[1]); else { dates(); formatting(); selection(); malformed(); }
+    else if (argc>1) oracle(argv[1]); else { dates(); official_calendar(); formatting(); selection(); malformed(); }
     printf("PASS total: %lu assertions\n",checks); return 0;
 }

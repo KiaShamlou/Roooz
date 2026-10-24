@@ -14,7 +14,7 @@ build:
 	mkdir -p build
 $(LIB): core/src/rooz.c core/src/locales.inc core/include/rooz.h | build
 	$(CC) $(CFLAGS) $(SHARED) -Icore/include core/src/rooz.c -o $@
-build/core_test: tests/core_test.c core/src/rooz.c core/src/locales.inc core/include/rooz.h | build
+build/core_test: tests/core_test.c tests/fixtures/official_1405.h core/src/rooz.c core/src/locales.inc core/include/rooz.h | build
 	$(CC) $(CFLAGS) -Icore/include core/src/rooz.c tests/core_test.c -o $@
 test: build/core_test
 	./build/core_test

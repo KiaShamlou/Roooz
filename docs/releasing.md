@@ -5,7 +5,7 @@ Repository: https://github.com/KiaShamlou/Roooz
 1. Require the complete `conformance` workflow to pass on the exact commit,
    including Android instrumentation and Flutter bundled-engine integration.
 2. Review `docs/accuracy.md`; retain the Borkowski/ICU distinction. Do not market
-   official-year compatibility until independently cited official fixtures exist.
+   all-year official compatibility from the limited cited 1405 weekday/length fixture.
 3. Review platform support honestly: simulator build != interactive/device test.
 4. Check `python3 tools/sync_flutter_core.py --check`; never edit generated copies.
 5. Update versions/changelog together. Inspect MIT and third-party notices.

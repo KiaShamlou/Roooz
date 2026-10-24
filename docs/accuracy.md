@@ -29,8 +29,8 @@ Primary references:
 - [ICU PersianCalendar discussion](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4j/com/ibm/icu/util/PersianCalendar.html)
 
 These are algorithmic references, not a claim that this package has been approved
-by Iran's calendar authority. Official annual calendars should be incorporated as
-versioned, cited fixtures before advertising official-calendar compatibility.
+by Iran's calendar authority. The official 1405 year-at-a-glance is now an independently sourced fixture for
+month lengths and weekday placement only; that limited check is not certification.
 
 ## Independent comparison and an actual disagreement
 
@@ -89,3 +89,15 @@ both directions, localized parse round-trips and invalid Esfand overflow. The
 corpus is generated from the pinned reference, not from Rooz. CI regenerates it
 and compares exact bytes. It includes the far-future ICU disagreement years;
 we preserve the declared algorithm instead of silently changing leap-year rules.
+
+## Official 1405 fixture (independent of the algorithm)
+
+Source: University of Tehran Calendar Center, [1405 at a glance](https://calendar.ut.ac.ir/documents/2139738/7092644/abstract-1405.pdf),
+page 1, retrieved 2026-10-24. PDF SHA256:
+`218cfa5b22f712f8f08d07dbd579f93e2972a34d773b08766d93ae5e8ed0b8cc`.
+
+After rendering the PDF, all twelve panels were visually checked. Only factual
+month lengths and first weekdays were transcribed into `tests/fixtures/official_1405.h`.
+Tests verify all 365 weekday positions and reject each month's overflow date.
+The PDF itself is not redistributed. This fixture does **not** validate holidays,
+lunar dates, Gregorian correspondences, other official years or future revisions.
