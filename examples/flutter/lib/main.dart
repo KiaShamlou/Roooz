@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'playground.dart' show RoozPlaygroundApp;
 import 'package:rooz_calendar_flutter/rooz_calendar_flutter.dart';
 import 'package:rooz_native/rooz_native.dart' show openBundledRooz;
 
-void main() => runApp(BookingApp(engine: openBundledRooz()));
+void main() => runApp(RoozPlaygroundApp(engine: openBundledRooz()));
 
 class BookingApp extends StatelessWidget {
   final Rooz engine;
